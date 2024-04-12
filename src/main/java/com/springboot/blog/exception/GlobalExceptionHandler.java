@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,13 +29,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         // 1.create payload containing exception details
         ApiExceptionErrorDetails apiExceptionErrorDetails = new ApiExceptionErrorDetails(
                 e.getMessage(),
-                HttpStatus.BAD_REQUEST.value(),
+                e.getHttpStatus().value(),
                 new Date(),
                 webRequest.getDescription(false)
 
         );
         // 2.return response entity
-        return new ResponseEntity<>(apiExceptionErrorDetails, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(apiExceptionErrorDetails, e.getHttpStatus());
     }
 
     // handle all not found
@@ -82,6 +83,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         return new ResponseEntity<>(apiExceptionErrorDetails, HttpStatus.FORBIDDEN);
     }
 
+//    DisabledException thrown   for users that register but enable flag is false for them
+@ExceptionHandler(value = {DisabledException.class})
+public ResponseEntity<ApiExceptionErrorDetails> handleDisabledException(DisabledException e,
+                                                                            WebRequest webRequest) {
+    ApiExceptionErrorDetails apiExceptionErrorDetails = new ApiExceptionErrorDetails(
+            e.getMessage(),
+            HttpStatus.FORBIDDEN.value(),
+            new Date(),
+            webRequest.getDescription(false)
+    );
+
+    return new ResponseEntity<>(apiExceptionErrorDetails, HttpStatus.FORBIDDEN);
+}
 
      public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,

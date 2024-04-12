@@ -6,7 +6,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class BlogAPIException extends RuntimeException{
 
-    public BlogAPIException(String message) {
+    private final HttpStatus httpStatus;
+
+    public BlogAPIException(HttpStatus httpStatus, String message) {
         super(message);
+        this.httpStatus = httpStatus;
     }
 }

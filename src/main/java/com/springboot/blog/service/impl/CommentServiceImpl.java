@@ -10,6 +10,7 @@ import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.CommentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -73,7 +74,7 @@ public class CommentServiceImpl implements CommentService {
         );
 
         if(!post.getId().equals(comment.getPost().getId())){
-            throw new BlogAPIException("comment does not belong to the post");
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "comment does not belong to the post");
         }
 
         return mapToDTO(comment);
@@ -92,7 +93,7 @@ public class CommentServiceImpl implements CommentService {
         );
 
         if(!post.getId().equals(comment.getPost().getId())){
-            throw new BlogAPIException("comment does not belong to the post");
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "comment does not belong to the post");
         }
 
         comment.setName(commentDto.getName());
@@ -117,7 +118,7 @@ public class CommentServiceImpl implements CommentService {
         );
 
         if(!post.getId().equals(comment.getPost().getId())){
-            throw new BlogAPIException("comment does not belong to the post");
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "comment does not belong to the post");
         }
 
         commentRepository.delete(comment);
